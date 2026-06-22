@@ -8,22 +8,24 @@
 body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
 header{background:#0b3d66;color:white;padding:16px 24px;font-size:22px;font-weight:bold}
 .student{font-size:14px;margin-top:6px;font-weight:normal}
-.container{display:grid;grid-template-columns:330px 1fr 1.1fr;gap:12px;padding:16px}
+.container{display:grid;grid-template-columns:330px 1.4fr 1fr;gap:12px;padding:16px}
 .panel{background:white;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 h2{font-size:18px;margin-top:0;color:#0b3d66;border-bottom:2px solid #ddd;padding-bottom:8px}
-h3{font-size:15px;margin-bottom:8px}
+h3{font-size:15px;margin-bottom:8px;color:#0b3d66}
 label{display:block;margin:8px 0}
 input{width:100%;box-sizing:border-box;padding:6px}
 label input[type="radio"]{width:auto}
-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
 th,td{border:1px solid #ccc;padding:6px;text-align:center}
 th{background:#eaf2fb}
 button{padding:10px 14px;margin:6px 3px;border:none;border-radius:5px;cursor:pointer;background:#0b66c3;color:white;font-weight:bold}
 button.secondary{background:#666}
 button.danger{background:#b3261e}
 .bottom-bar{padding:12px 16px;text-align:center}
-.output-box{background:#f8fbff;border:1px solid #c9def5;padding:12px;border-radius:6px;min-height:260px;line-height:1.8}
+.output-box{background:#f8fbff;border:1px solid #c9def5;padding:12px;border-radius:6px;min-height:260px;line-height:1.8;overflow:auto}
 .diagram-box{background:#fff;border:1px dashed #999;border-radius:6px;min-height:420px;display:flex;align-items:center;justify-content:center;color:#555;text-align:center;padding:16px}
+.kmap{width:360px;margin-bottom:20px}
+.eq{font-weight:bold;color:#b3261e}
 </style>
 </head>
 
@@ -74,7 +76,7 @@ button.danger{background:#b3261e}
 </section>
 
 <section class="panel">
-  <h2>Output 2: Sequential Circuit Diagram</h2>
+  <h2>Output 2</h2>
   <div id="diagram" class="diagram-box">
     Circuit diagram will be generated here.
   </div>
@@ -148,7 +150,7 @@ function encodeStates(rows){
   });
 
   if(states.length>4){
-    alert("V1 only supports up to 4 states.");
+    alert("This version only supports up to 4 states.");
     return null;
   }
 
@@ -176,8 +178,7 @@ function ffDesign(ff,q,qn){
   }
 
   if(ff==="T"){
-    if(q===qn) return {T:"0"};
-    return {T:"1"};
+    return {T:q===qn ? "0" : "1"};
   }
 
   if(ff==="SR"){
@@ -192,8 +193,8 @@ function buildInputTable(rows,map,ff){
   let table=[];
 
   rows.forEach(r=>{
-    let q=map[r.present];     // Q1Q0
-    let qn=map[r.next];       // Q1*Q0*
+    let q=map[r.present]; 
+    let qn=map[r.next];
 
     let q1=q[0], q0=q[1];
     let q1n=qn[0], q0n=qn[1];
@@ -201,12 +202,7 @@ function buildInputTable(rows,map,ff){
     let inputQ0=ffDesign(ff,q0,q0n);
     let inputQ1=ffDesign(ff,q1,q1n);
 
-    let row={
-      Q1:q1,
-      Q0:q0,
-      X:r.x,
-      Z:r.z
-    };
+    let row={Q1:q1,Q0:q0,X:r.x,Z:r.z};
 
     if(ff==="D"){
       row.D0=inputQ0.D;
@@ -263,9 +259,222 @@ function renderInputTable(inputTable,ff){
 
   inputTable.forEach(r=>{
     html+="<tr>";
-    cols.forEach(c=>html+=`<td>${r[c]}</td>`);
+    cols.forEach(c=>html+=`<td>${r[c] ?? "-"}</td>`);
     html+="</tr>";
   });
+
+  html+="</table>";
+  return html;
+}
+
+/* K-map index：variables = X, Q0, Q1 */
+function getIndex(X,Q0,Q1){
+  return Number(X)*4 + Number(Q0)*2 + Number(Q1);
+}
+
+function buildKmapValues(inputTable,inputName){
+  let values=Array(8).fill("-");
+  inputTable.forEach(r=>{
+    let index=getIndex(r.X,r.Q0,r.Q1);
+    values[index]=r[inputName];
+  });
+  return values;
+}
+
+function renderKmap(inputName,values,equation){
+  const cols=[
+    {label:"00",q1:"0",q0:"0"},
+    {label:"01",q1:"0",q0:"1"},
+    {label:"11",q1:"1",q0:"1"},
+    {label:"10",q1:"1",q0:"0"}
+  ];
+
+  let html=`<h3>${inputName} K-map</h3>`;
+  html+=`<table class="kmap">
+    <tr>
+      <th>X \\ Q1Q0</th>
+      <th>00</th>
+      <th>01</th>
+      <th>11</th>
+      <th>10</th>
+    </tr>`;
+
+  ["0","1"].forEach(x=>{
+    html+=`<tr><th>${x}</th>`;
+    cols.forEach(c=>{
+      let index=getIndex(x,c.q0,c.q1);
+      html+=`<td>${values[index]}</td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  html+=`</table>`;
+  html+=`<div class="eq">${inputName} = ${equation}</div>`;
+  return html;
+}
+
+/* 3-variable Boolean simplification */
+function patternCovers(pattern,index){
+  let bits=[
+    Math.floor(index/4)%2,
+    Math.floor(index/2)%2,
+    index%2
+  ]; // X,Q0,Q1
+
+  for(let i=0;i<3;i++){
+    if(pattern[i]!=="-" && Number(pattern[i])!==bits[i]) return false;
+  }
+  return true;
+}
+
+function literalCount(pattern){
+  return pattern.split("").filter(c=>c!=="-").length;
+}
+
+function patternToTerm(pattern){
+  let vars=["X","Q0","Q1"];
+  let term="";
+
+  for(let i=0;i<3;i++){
+    if(pattern[i]==="1") term+=vars[i];
+    if(pattern[i]==="0") term+=vars[i]+"'";
+  }
+
+  return term==="" ? "1" : term;
+}
+
+function simplify(values){
+  let ones=[];
+  let dcs=[];
+
+  values.forEach((v,i)=>{
+    if(v==="1") ones.push(i);
+    if(v==="X") dcs.push(i);
+  });
+
+  if(ones.length===0) return "0";
+  if(ones.length + dcs.length === 8) return "1";
+
+  let allowed=new Set([...ones,...dcs]);
+  let patterns=[];
+
+  for(let a of ["0","1","-"]){
+    for(let b of ["0","1","-"]){
+      for(let c of ["0","1","-"]){
+        let p=a+b+c;
+        let covered=[];
+        let valid=true;
+
+        for(let i=0;i<8;i++){
+          if(patternCovers(p,i)){
+            if(!allowed.has(i)){
+              valid=false;
+              break;
+            }
+            covered.push(i);
+          }
+        }
+
+        let coversOne=covered.some(i=>ones.includes(i));
+
+        if(valid && coversOne){
+          patterns.push({p,covered});
+        }
+      }
+    }
+  }
+
+  let best=null;
+  let n=patterns.length;
+
+  for(let mask=1;mask<(1<<n);mask++){
+    let cover=new Set();
+    let selected=[];
+
+    for(let i=0;i<n;i++){
+      if(mask & (1<<i)){
+        selected.push(patterns[i]);
+        patterns[i].covered.forEach(x=>{
+          if(ones.includes(x)) cover.add(x);
+        });
+      }
+    }
+
+    let ok=ones.every(x=>cover.has(x));
+    if(!ok) continue;
+
+    let costLits=selected.reduce((sum,item)=>sum+literalCount(item.p),0);
+    let costTerms=selected.length;
+
+    if(
+      best===null ||
+      costLits < best.costLits ||
+      (costLits===best.costLits && costTerms < best.costTerms)
+    ){
+      best={selected,costLits,costTerms};
+    }
+  }
+
+  if(best===null) return "0";
+
+  return best.selected
+    .map(item=>patternToTerm(item.p))
+    .join(" + ");
+}
+
+function getInputNames(ff){
+  if(ff==="D") return ["D0","D1"];
+  if(ff==="JK") return ["J0","K0","J1","K1"];
+  if(ff==="T") return ["T0","T1"];
+  if(ff==="SR") return ["S0","R0","S1","R1"];
+}
+
+function renderKmaps(inputTable,ff,equations){
+  let html="<h3>K-map Simplification</h3>";
+  getInputNames(ff).forEach(name=>{
+    let values=buildKmapValues(inputTable,name);
+    equations[name]=simplify(values);
+    html+=renderKmap(name,values,equations[name]);
+  });
+  return html;
+}
+
+function renderFinalEquations(ff,equations){
+  let html="<h3>Final FF Input Equations</h3>";
+  html+=`<table>
+    <tr>
+      <th>FF</th>
+      <th>INPUT</th>
+      <th>EQUATION</th>
+    </tr>`;
+
+  if(ff==="D"){
+    html+=`
+      <tr><td>FF for Q0</td><td>D0</td><td>D0 = ${equations.D0}</td></tr>
+      <tr><td>FF for Q1</td><td>D1</td><td>D1 = ${equations.D1}</td></tr>
+    `;
+  }
+
+  if(ff==="JK"){
+    html+=`
+      <tr><td>FF for Q0</td><td>J0, K0</td><td>J0 = ${equations.J0} , K0 = ${equations.K0}</td></tr>
+      <tr><td>FF for Q1</td><td>J1, K1</td><td>J1 = ${equations.J1} , K1 = ${equations.K1}</td></tr>
+    `;
+  }
+
+  if(ff==="T"){
+    html+=`
+      <tr><td>FF for Q0</td><td>T0</td><td>T0 = ${equations.T0}</td></tr>
+      <tr><td>FF for Q1</td><td>T1</td><td>T1 = ${equations.T1}</td></tr>
+    `;
+  }
+
+  if(ff==="SR"){
+    html+=`
+      <tr><td>FF for Q0</td><td>S0, R0</td><td>S0 = ${equations.S0} , R0 = ${equations.R0}</td></tr>
+      <tr><td>FF for Q1</td><td>S1, R1</td><td>S1 = ${equations.S1} , R1 = ${equations.R1}</td></tr>
+    `;
+  }
 
   html+="</table>";
   return html;
@@ -285,6 +494,7 @@ function generate(){
   if(map===null) return;
 
   let inputTable=buildInputTable(rows,map,ff);
+  let equations={};
 
   let html=`
     <b>Model Type:</b> ${model}<br>
@@ -293,19 +503,16 @@ function generate(){
 
   html+=renderStateAssignment(map);
   html+=renderInputTable(inputTable,ff);
-
-  html+=`
-    <h3>Next Step</h3>
-    K-map and simplified equations will be generated from this Input Table.
-  `;
+  html+=renderKmaps(inputTable,ff,equations);
+  html+=renderFinalEquations(ff,equations);
 
   document.getElementById("output1").innerHTML=html;
 
   document.getElementById("diagram").innerHTML=`
     <div>
       <h3>${ff} Flip-Flop Sequential Circuit Diagram</h3>
-      <p>Input Table is generated successfully.</p>
-      <p>Next version will use this table to fill K-map and simplify equations.</p>
+      <p>The circuit diagram will be generated from the simplified equations.</p>
+      <p>Current step completed: Input Table, K-map, and Final Equations.</p>
     </div>
   `;
 }
