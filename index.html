@@ -4,137 +4,30 @@
 <head>
 <meta charset="UTF-8">
 <title>Sequential Circuit Design Automation System</title>
-
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-}
-
-header {
-  background: #0b3d66;
-  color: white;
-  padding: 16px 24px;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.student {
-  font-size: 14px;
-  margin-top: 6px;
-  font-weight: normal;
-}
-
-.container {
-  display: grid;
-  grid-template-columns: 330px 1fr 1.2fr;
-  gap: 12px;
-  padding: 16px;
-}
-
-.panel {
-  background: white;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-h2 {
-  font-size: 18px;
-  margin-top: 0;
-  color: #0b3d66;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 8px;
-}
-
-h3 {
-  font-size: 15px;
-  margin-bottom: 8px;
-}
-
-label {
-  display: block;
-  margin: 8px 0;
-}
-
-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 6px;
-}
-
-label input[type="radio"] {
-  width: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
-  font-size: 14px;
-}
-
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px;
-  text-align: center;
-}
-
-th {
-  background: #eaf2fb;
-}
-
-button {
-  padding: 10px 14px;
-  margin: 6px 3px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background: #0b66c3;
-  color: white;
-  font-weight: bold;
-}
-
-button.secondary {
-  background: #666;
-}
-
-button.danger {
-  background: #b3261e;
-}
-
-.bottom-bar {
-  padding: 12px 16px;
-  text-align: center;
-}
-
-.equation-box {
-  background: #f8fbff;
-  border: 1px solid #c9def5;
-  padding: 12px;
-  border-radius: 6px;
-  min-height: 260px;
-  line-height: 1.8;
-}
-
-.diagram-box {
-  background: #fff;
-  border: 1px dashed #999;
-  border-radius: 6px;
-  min-height: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
-  text-align: center;
-  padding: 16px;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
+header{background:#0b3d66;color:white;padding:16px 24px;font-size:22px;font-weight:bold}
+.student{font-size:14px;margin-top:6px;font-weight:normal}
+.container{display:grid;grid-template-columns:330px 1fr 1.1fr;gap:12px;padding:16px}
+.panel{background:white;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{font-size:18px;margin-top:0;color:#0b3d66;border-bottom:2px solid #ddd;padding-bottom:8px}
+h3{font-size:15px;margin-bottom:8px}
+label{display:block;margin:8px 0}
+input{width:100%;box-sizing:border-box;padding:6px}
+label input[type="radio"]{width:auto}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+th,td{border:1px solid #ccc;padding:6px;text-align:center}
+th{background:#eaf2fb}
+button{padding:10px 14px;margin:6px 3px;border:none;border-radius:5px;cursor:pointer;background:#0b66c3;color:white;font-weight:bold}
+button.secondary{background:#666}
+button.danger{background:#b3261e}
+.bottom-bar{padding:12px 16px;text-align:center}
+.output-box{background:#f8fbff;border:1px solid #c9def5;padding:12px;border-radius:6px;min-height:260px;line-height:1.8}
+.diagram-box{background:#fff;border:1px dashed #999;border-radius:6px;min-height:420px;display:flex;align-items:center;justify-content:center;color:#555;text-align:center;padding:16px}
 </style>
 </head>
 
 <body>
-
 <header>
   Sequential Circuit Design Automation System
   <div class="student">王靚瑜　1140565</div>
@@ -156,7 +49,6 @@ button.danger {
   <label><input type="radio" name="ff" value="SR"> SR Flip-Flop</label>
 
   <h3>3. State Table Input</h3>
-
   <table id="stateTable">
     <thead>
       <tr>
@@ -175,8 +67,8 @@ button.danger {
 </section>
 
 <section class="panel">
-  <h2>Output 1: Flip-Flop Input Equations</h2>
-  <div id="equations" class="equation-box">
+  <h2>Output 1</h2>
+  <div id="output1" class="output-box">
     Please enter a state table and click GENERATE.
   </div>
 </section>
@@ -195,195 +87,225 @@ button.danger {
 </div>
 
 <script>
-function addRow(ps = "", x = "", ns = "", z = "") {
-  const tbody = document.querySelector("#stateTable tbody");
-  const row = document.createElement("tr");
-
-  row.innerHTML = `
+function addRow(ps="", x="", ns="", z=""){
+  const tbody=document.querySelector("#stateTable tbody");
+  const row=document.createElement("tr");
+  row.innerHTML=`
     <td><input value="${ps}"></td>
     <td><input value="${x}"></td>
     <td><input value="${ns}"></td>
     <td><input value="${z}"></td>
   `;
-
   tbody.appendChild(row);
 }
 
-function clearTable() {
-  document.querySelector("#stateTable tbody").innerHTML = "";
-  document.getElementById("equations").innerHTML =
-    "Please enter a state table and click GENERATE.";
-  document.getElementById("diagram").innerHTML =
-    "Circuit diagram will be generated here.";
+function clearTable(){
+  document.querySelector("#stateTable tbody").innerHTML="";
+  document.getElementById("output1").innerHTML="Please enter a state table and click GENERATE.";
+  document.getElementById("diagram").innerHTML="Circuit diagram will be generated here.";
 }
 
-function loadExample() {
+function loadExample(){
   clearTable();
-
-  addRow("A", "0", "A", "0");
-  addRow("A", "1", "B", "0");
-  addRow("B", "0", "C", "1");
-  addRow("B", "1", "A", "0");
-  addRow("C", "0", "A", "1");
-  addRow("C", "1", "C", "1");
+  addRow("A","0","A","0");
+  addRow("A","1","B","0");
+  addRow("B","0","C","1");
+  addRow("B","1","A","0");
+  addRow("C","0","A","1");
+  addRow("C","1","C","1");
 }
 
-function readStateTable() {
-  const rows = document.querySelectorAll("#stateTable tbody tr");
-  let data = [];
-
-  rows.forEach(row => {
-    const cols = row.querySelectorAll("input");
-
-    data.push({
-      present: cols[0].value.trim(),
-      x: cols[1].value.trim(),
-      next: cols[2].value.trim(),
-      z: cols[3].value.trim()
-    });
+function readStateTable(){
+  const rows=document.querySelectorAll("#stateTable tbody tr");
+  let data=[];
+  rows.forEach(row=>{
+    const c=row.querySelectorAll("input");
+    if(c[0].value.trim()!=="" && c[2].value.trim()!==""){
+      data.push({
+        present:c[0].value.trim(),
+        x:c[1].value.trim(),
+        next:c[2].value.trim(),
+        z:c[3].value.trim()
+      });
+    }
   });
-
   return data;
 }
 
-function encodeStates(rows) {
-  let states = new Set();
-
-  rows.forEach(r => {
-    if (r.present) states.add(r.present);
-    if (r.next) states.add(r.next);
-  });
-
-  states = [...states];
-
-  let bits = Math.ceil(Math.log2(states.length));
-  if (bits < 1) bits = 1;
-
-  let mapping = {};
-
-  states.forEach((s, index) => {
-    mapping[s] = index.toString(2).padStart(bits, "0");
-  });
-
-  return { mapping, bits };
-}
-
-function getSelectedFF() {
+function getSelectedFF(){
   return document.querySelector('input[name="ff"]:checked').value;
 }
 
-function getSelectedModel() {
+function getSelectedModel(){
   return document.querySelector('input[name="model"]:checked').value;
 }
 
-function getFFInputs(ffType, q, qNext) {
-  if (ffType === "D") {
-    return { D: qNext };
+function encodeStates(rows){
+  let states=[];
+  rows.forEach(r=>{
+    if(!states.includes(r.present)) states.push(r.present);
+    if(!states.includes(r.next)) states.push(r.next);
+  });
+
+  if(states.length>4){
+    alert("V1 only supports up to 4 states.");
+    return null;
   }
 
-  if (ffType === "T") {
-    return { T: q === qNext ? "0" : "1" };
+  let code=["00","01","10","11"];
+  let map={};
+
+  states.forEach((s,i)=>{
+    map[s]=code[i];
+  });
+
+  return map;
+}
+
+/* Design Table：內部使用，不顯示 */
+function ffDesign(ff,q,qn){
+  if(ff==="D"){
+    return {D:qn};
   }
 
-  if (ffType === "JK") {
-    if (q === "0" && qNext === "0") return { J: "0", K: "X" };
-    if (q === "0" && qNext === "1") return { J: "1", K: "X" };
-    if (q === "1" && qNext === "0") return { J: "X", K: "1" };
-    if (q === "1" && qNext === "1") return { J: "X", K: "0" };
+  if(ff==="JK"){
+    if(q==="0" && qn==="0") return {J:"0",K:"X"};
+    if(q==="0" && qn==="1") return {J:"1",K:"X"};
+    if(q==="1" && qn==="0") return {J:"X",K:"1"};
+    if(q==="1" && qn==="1") return {J:"X",K:"0"};
   }
 
-  if (ffType === "SR") {
-    if (q === "0" && qNext === "0") return { S: "0", R: "X" };
-    if (q === "0" && qNext === "1") return { S: "1", R: "0" };
-    if (q === "1" && qNext === "0") return { S: "0", R: "1" };
-    if (q === "1" && qNext === "1") return { S: "X", R: "0" };
+  if(ff==="T"){
+    if(q===qn) return {T:"0"};
+    return {T:"1"};
+  }
+
+  if(ff==="SR"){
+    if(q==="0" && qn==="0") return {S:"0",R:"X"};
+    if(q==="0" && qn==="1") return {S:"1",R:"0"};
+    if(q==="1" && qn==="0") return {S:"0",R:"1"};
+    if(q==="1" && qn==="1") return {S:"X",R:"0"};
   }
 }
 
-function generate() {
-  const rows = readStateTable();
-  const ffType = getSelectedFF();
-  const modelType = getSelectedModel();
+function buildInputTable(rows,map,ff){
+  let table=[];
 
-  if (rows.length === 0) {
+  rows.forEach(r=>{
+    let q=map[r.present];     // Q1Q0
+    let qn=map[r.next];       // Q1*Q0*
+
+    let q1=q[0], q0=q[1];
+    let q1n=qn[0], q0n=qn[1];
+
+    let inputQ0=ffDesign(ff,q0,q0n);
+    let inputQ1=ffDesign(ff,q1,q1n);
+
+    let row={
+      Q1:q1,
+      Q0:q0,
+      X:r.x,
+      Z:r.z
+    };
+
+    if(ff==="D"){
+      row.D0=inputQ0.D;
+      row.D1=inputQ1.D;
+    }
+
+    if(ff==="JK"){
+      row.J0=inputQ0.J;
+      row.K0=inputQ0.K;
+      row.J1=inputQ1.J;
+      row.K1=inputQ1.K;
+    }
+
+    if(ff==="T"){
+      row.T0=inputQ0.T;
+      row.T1=inputQ1.T;
+    }
+
+    if(ff==="SR"){
+      row.S0=inputQ0.S;
+      row.R0=inputQ0.R;
+      row.S1=inputQ1.S;
+      row.R1=inputQ1.R;
+    }
+
+    table.push(row);
+  });
+
+  return table;
+}
+
+function renderStateAssignment(map){
+  let html="<h3>State Assignment</h3>";
+  html+="<table><tr><th>State</th><th>Q1Q0</th></tr>";
+  for(let s in map){
+    html+=`<tr><td>${s}</td><td>${map[s]}</td></tr>`;
+  }
+  html+="</table>";
+  return html;
+}
+
+function renderInputTable(inputTable,ff){
+  let cols=["Q1","Q0","X"];
+
+  if(ff==="D") cols.push("D0","D1");
+  if(ff==="JK") cols.push("J0","K0","J1","K1");
+  if(ff==="T") cols.push("T0","T1");
+  if(ff==="SR") cols.push("S0","R0","S1","R1");
+
+  let html="<h3>Input Table</h3>";
+  html+="<table><tr>";
+  cols.forEach(c=>html+=`<th>${c}</th>`);
+  html+="</tr>";
+
+  inputTable.forEach(r=>{
+    html+="<tr>";
+    cols.forEach(c=>html+=`<td>${r[c]}</td>`);
+    html+="</tr>";
+  });
+
+  html+="</table>";
+  return html;
+}
+
+function generate(){
+  const rows=readStateTable();
+  const ff=getSelectedFF();
+  const model=getSelectedModel();
+
+  if(rows.length===0){
     alert("Please enter state table.");
     return;
   }
 
-  const result = encodeStates(rows);
-  const mapping = result.mapping;
-  const bits = result.bits;
+  let map=encodeStates(rows);
+  if(map===null) return;
 
-  let html = `
-    <b>Model Type:</b> ${modelType}<br>
-    <b>Flip-Flop Type:</b> ${ffType} Flip-Flop<br><br>
+  let inputTable=buildInputTable(rows,map,ff);
+
+  let html=`
+    <b>Model Type:</b> ${model}<br>
+    <b>Flip-Flop Type:</b> ${ff} Flip-Flop<br><br>
   `;
 
-  html += `<b>State Variables:</b> `;
-  for (let i = bits - 1; i >= 0; i--) {
-    html += `Q${i} `;
-  }
+  html+=renderStateAssignment(map);
+  html+=renderInputTable(inputTable,ff);
 
-  html += `<br><br><b>State Encoding</b><br>`;
-  for (let state in mapping) {
-    html += `${state} = ${mapping[state]}<br>`;
-  }
-
-  html += `<br><b>Excitation Table</b><br>`;
-  html += `<table>
-    <tr>
-      <th>Present</th>
-      <th>X</th>
-      <th>Next</th>
-      <th>Z</th>
-      <th>Q</th>
-      <th>Q(next)</th>
-      <th>FF Inputs</th>
-    </tr>
+  html+=`
+    <h3>Next Step</h3>
+    K-map and simplified equations will be generated from this Input Table.
   `;
 
-  rows.forEach(r => {
-    let q = mapping[r.present];
-    let qNext = mapping[r.next];
+  document.getElementById("output1").innerHTML=html;
 
-    let ffText = "";
-
-    for (let i = 0; i < bits; i++) {
-      let qBit = q[i];
-      let qNextBit = qNext[i];
-      let inputs = getFFInputs(ffType, qBit, qNextBit);
-
-      let bitName = bits - 1 - i;
-
-      for (let key in inputs) {
-        ffText += `${key}${bitName}=${inputs[key]} `;
-      }
-    }
-
-    html += `
-      <tr>
-        <td>${r.present}</td>
-        <td>${r.x}</td>
-        <td>${r.next}</td>
-        <td>${r.z}</td>
-        <td>${q}</td>
-        <td>${qNext}</td>
-        <td>${ffText}</td>
-      </tr>
-    `;
-  });
-
-  html += `</table>`;
-
-  document.getElementById("equations").innerHTML = html;
-
-  document.getElementById("diagram").innerHTML = `
+  document.getElementById("diagram").innerHTML=`
     <div>
-      <h3>${ffType} Flip-Flop Sequential Circuit Diagram</h3>
-      <p>Input X → Combinational Logic → ${ffType} Flip-Flops → Output Z</p>
-      <p>State Variables: ${Array.from({length: bits}, (_, i) => "Q" + (bits - 1 - i)).join(", ")}</p>
-      <p>CLK is connected to all flip-flops.</p>
-      <p>Next step: generate simplified Boolean equations and SVG circuit diagram.</p>
+      <h3>${ff} Flip-Flop Sequential Circuit Diagram</h3>
+      <p>Input Table is generated successfully.</p>
+      <p>Next version will use this table to fill K-map and simplify equations.</p>
     </div>
   `;
 }
