@@ -1,0 +1,311 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sequential Circuit Design Automation System</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    header {
+      background: #0b3d66;
+      color: white;
+      padding: 16px 24px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .student {
+      font-size: 14px;
+      margin-top: 6px;
+      font-weight: normal;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 330px 1fr 1.2fr;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-top: 0;
+      color: #0b3d66;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background: #eaf2fb;
+    }
+
+    button {
+      padding: 10px 16px;
+      margin: 6px 4px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #0b66c3;
+      color: white;
+      font-weight: bold;
+    }
+
+    button.secondary {
+      background: #666;
+    }
+
+    button.danger {
+      background: #b3261e;
+    }
+
+    .bottom-bar {
+      padding: 12px 16px;
+      text-align: center;
+    }
+
+    .equation-box {
+      background: #f8fbff;
+      border: 1px solid #c9def5;
+      padding: 12px;
+      border-radius: 6px;
+      min-height: 180px;
+      line-height: 1.8;
+    }
+
+    .diagram-box {
+      background: #fff;
+      border: 1px dashed #999;
+      border-radius: 6px;
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      text-align: center;
+      padding: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    Sequential Circuit Design Automation System
+    <div class="student">王靚瑜　1140565</div>
+  </header>
+
+  <div class="container">
+    <section class="panel">
+      <h2>Input</h2>
+
+      <h3>1. Model Type</h3>
+      <label><input type="radio" name="model" value="Mealy" checked /> Mealy Model</label>
+      <label><input type="radio" name="model" value="Moore" /> Moore Model</label>
+
+      <h3>2. Flip-Flop Type</h3>
+      <label><input type="radio" name="ff" value="D" checked /> D Flip-Flop</label>
+      <label><input type="radio" name="ff" value="JK" /> JK Flip-Flop</label>
+      <label><input type="radio" name="ff" value="T" /> T Flip-Flop</label>
+      <label><input type="radio" name="ff" value="SR" /> SR Flip-Flop</label>
+
+      <h3>3. State Table Input</h3>
+      <label>
+        Input Variable
+        <input id="inputVar" value="X" />
+      </label>
+
+      <label>
+        Output Variable
+        <input id="outputVar" value="Z" />
+      </label>
+
+      <table id="stateTable">
+        <thead>
+          <tr>
+            <th>Present State</th>
+            <th>X</th>
+            <th>Next State</th>
+            <th>Z</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
+      <button onclick="addRow()">Add Row</button>
+      <button class="secondary" onclick="loadExample()">Load Example</button>
+      <button class="danger" onclick="clearTable()">Clear Table</button>
+    </section>
+
+    <section class="panel">
+      <h2>Output 1: Flip-Flop Input Equations</h2>
+      <div id="equations" class="equation-box">
+        Please enter a state table and click GENERATE.
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Output 2: Sequential Circuit Diagram</h2>
+      <div id="diagram" class="diagram-box">
+        Circuit diagram will be generated here.
+      </div>
+    </section>
+  </div>
+
+  <div class="bottom-bar">
+    <button onclick="generate()">GENERATE</button>
+    <button class="secondary" onclick="exportReport()">EXPORT REPORT</button>
+  </div>
+
+  <script>
+    function addRow(ps = "", x = "", ns = "", z = "") {
+      const tbody = document.querySelector("#stateTable tbody");
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td><input value="${ps}"></td>
+        <td><input value="${x}"></td>
+        <td><input value="${ns}"></td>
+        <td><input value="${z}"></td>
+      `;
+
+      tbody.appendChild(row);
+    }
+
+    function clearTable() {
+      document.querySelector("#stateTable tbody").innerHTML = "";
+      document.getElementById("equations").innerHTML =
+        "Please enter a state table and click GENERATE.";
+      document.getElementById("diagram").innerHTML =
+        "Circuit diagram will be generated here.";
+    }
+
+    function loadExample() {
+      clearTable();
+
+      addRow("A", "0", "A", "0");
+      addRow("A", "1", "B", "0");
+      addRow("B", "0", "C", "1");
+      addRow("B", "1", "A", "0");
+      addRow("C", "0", "A", "1");
+      addRow("C", "1", "C", "1");
+    }
+
+    function getSelectedFF() {
+      return document.querySelector('input[name="ff"]:checked').value;
+    }
+
+    function getSelectedModel() {
+      return document.querySelector('input[name="model"]:checked').value;
+    }
+
+    function generate() {
+      const ffType = getSelectedFF();
+      const modelType = getSelectedModel();
+
+      let equations = `
+        <b>Model Type:</b> ${modelType}<br>
+        <b>Flip-Flop Type:</b> ${ffType} Flip-Flop<br><br>
+      `;
+
+      if (ffType === "D") {
+        equations += `
+          <b>D Flip-Flop Input Equations</b><br>
+          D1 = Q1(next)<br>
+          D0 = Q0(next)<br>
+        `;
+      }
+
+      if (ffType === "JK") {
+        equations += `
+          <b>JK Flip-Flop Input Equations</b><br>
+          J1 = simplified equation<br>
+          K1 = simplified equation<br>
+          J0 = simplified equation<br>
+          K0 = simplified equation<br>
+        `;
+      }
+
+      if (ffType === "T") {
+        equations += `
+          <b>T Flip-Flop Input Equations</b><br>
+          T1 = Q1 ⊕ Q1(next)<br>
+          T0 = Q0 ⊕ Q0(next)<br>
+        `;
+      }
+
+      if (ffType === "SR") {
+        equations += `
+          <b>SR Flip-Flop Input Equations</b><br>
+          S1 = set equation<br>
+          R1 = reset equation<br>
+          S0 = set equation<br>
+          R0 = reset equation<br>
+        `;
+      }
+
+      document.getElementById("equations").innerHTML = equations;
+
+      document.getElementById("diagram").innerHTML = `
+        <div>
+          <h3>${ffType} Flip-Flop Sequential Circuit Diagram</h3>
+          <p>Input X → Logic Gates → ${ffType} Flip-Flops → Output Z</p>
+          <p>CLK is connected to all flip-flops.</p>
+          <p>This area will be upgraded to an SVG circuit diagram in the next step.</p>
+        </div>
+      `;
+    }
+
+    function exportReport() {
+      alert("Report export function will be added in the next version.");
+    }
+
+    loadExample();
+  </script>
+</body>
+</html>
+```
