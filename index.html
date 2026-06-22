@@ -2,310 +2,395 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sequential Circuit Design Automation System</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-    }
+<meta charset="UTF-8">
+<title>Sequential Circuit Design Automation System</title>
 
-    header {
-      background: #0b3d66;
-      color: white;
-      padding: 16px 24px;
-      font-size: 22px;
-      font-weight: bold;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+}
 
-    .student {
-      font-size: 14px;
-      margin-top: 6px;
-      font-weight: normal;
-    }
+header {
+  background: #0b3d66;
+  color: white;
+  padding: 16px 24px;
+  font-size: 22px;
+  font-weight: bold;
+}
 
-    .container {
-      display: grid;
-      grid-template-columns: 330px 1fr 1.2fr;
-      gap: 12px;
-      padding: 16px;
-    }
+.student {
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: normal;
+}
 
-    .panel {
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+.container {
+  display: grid;
+  grid-template-columns: 330px 1fr 1.2fr;
+  gap: 12px;
+  padding: 16px;
+}
 
-    h2 {
-      font-size: 18px;
-      margin-top: 0;
-      color: #0b3d66;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 8px;
-    }
+.panel {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-    h3 {
-      font-size: 15px;
-      margin-bottom: 8px;
-    }
+h2 {
+  font-size: 18px;
+  margin-top: 0;
+  color: #0b3d66;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+}
 
-    label {
-      display: block;
-      margin: 8px 0;
-    }
+h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
 
-    input, select, textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 8px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+label {
+  display: block;
+  margin: 8px 0;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 14px;
-    }
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px;
+}
 
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      text-align: center;
-    }
+label input[type="radio"] {
+  width: auto;
+}
 
-    th {
-      background: #eaf2fb;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
 
-    button {
-      padding: 10px 16px;
-      margin: 6px 4px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background: #0b66c3;
-      color: white;
-      font-weight: bold;
-    }
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
 
-    button.secondary {
-      background: #666;
-    }
+th {
+  background: #eaf2fb;
+}
 
-    button.danger {
-      background: #b3261e;
-    }
+button {
+  padding: 10px 14px;
+  margin: 6px 3px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #0b66c3;
+  color: white;
+  font-weight: bold;
+}
 
-    .bottom-bar {
-      padding: 12px 16px;
-      text-align: center;
-    }
+button.secondary {
+  background: #666;
+}
 
-    .equation-box {
-      background: #f8fbff;
-      border: 1px solid #c9def5;
-      padding: 12px;
-      border-radius: 6px;
-      min-height: 180px;
-      line-height: 1.8;
-    }
+button.danger {
+  background: #b3261e;
+}
 
-    .diagram-box {
-      background: #fff;
-      border: 1px dashed #999;
-      border-radius: 6px;
-      min-height: 420px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #555;
-      text-align: center;
-      padding: 16px;
-    }
-  </style>
+.bottom-bar {
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.equation-box {
+  background: #f8fbff;
+  border: 1px solid #c9def5;
+  padding: 12px;
+  border-radius: 6px;
+  min-height: 260px;
+  line-height: 1.8;
+}
+
+.diagram-box {
+  background: #fff;
+  border: 1px dashed #999;
+  border-radius: 6px;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  text-align: center;
+  padding: 16px;
+}
+</style>
 </head>
 
 <body>
-  <header>
-    Sequential Circuit Design Automation System
-    <div class="student">王靚瑜　1140565</div>
-  </header>
 
-  <div class="container">
-    <section class="panel">
-      <h2>Input</h2>
+<header>
+  Sequential Circuit Design Automation System
+  <div class="student">王靚瑜　1140565</div>
+</header>
 
-      <h3>1. Model Type</h3>
-      <label><input type="radio" name="model" value="Mealy" checked /> Mealy Model</label>
-      <label><input type="radio" name="model" value="Moore" /> Moore Model</label>
+<div class="container">
 
-      <h3>2. Flip-Flop Type</h3>
-      <label><input type="radio" name="ff" value="D" checked /> D Flip-Flop</label>
-      <label><input type="radio" name="ff" value="JK" /> JK Flip-Flop</label>
-      <label><input type="radio" name="ff" value="T" /> T Flip-Flop</label>
-      <label><input type="radio" name="ff" value="SR" /> SR Flip-Flop</label>
+<section class="panel">
+  <h2>Input</h2>
 
-      <h3>3. State Table Input</h3>
-      <label>
-        Input Variable
-        <input id="inputVar" value="X" />
-      </label>
+  <h3>1. Model Type</h3>
+  <label><input type="radio" name="model" value="Mealy" checked> Mealy Model</label>
+  <label><input type="radio" name="model" value="Moore"> Moore Model</label>
 
-      <label>
-        Output Variable
-        <input id="outputVar" value="Z" />
-      </label>
+  <h3>2. Flip-Flop Type</h3>
+  <label><input type="radio" name="ff" value="D" checked> D Flip-Flop</label>
+  <label><input type="radio" name="ff" value="JK"> JK Flip-Flop</label>
+  <label><input type="radio" name="ff" value="T"> T Flip-Flop</label>
+  <label><input type="radio" name="ff" value="SR"> SR Flip-Flop</label>
 
-      <table id="stateTable">
-        <thead>
-          <tr>
-            <th>Present State</th>
-            <th>X</th>
-            <th>Next State</th>
-            <th>Z</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+  <h3>3. State Table Input</h3>
 
-      <button onclick="addRow()">Add Row</button>
-      <button class="secondary" onclick="loadExample()">Load Example</button>
-      <button class="danger" onclick="clearTable()">Clear Table</button>
-    </section>
+  <table id="stateTable">
+    <thead>
+      <tr>
+        <th>Present State</th>
+        <th>X</th>
+        <th>Next State</th>
+        <th>Z</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-    <section class="panel">
-      <h2>Output 1: Flip-Flop Input Equations</h2>
-      <div id="equations" class="equation-box">
-        Please enter a state table and click GENERATE.
-      </div>
-    </section>
+  <button onclick="addRow()">Add Row</button>
+  <button class="secondary" onclick="loadExample()">Load Example</button>
+  <button class="danger" onclick="clearTable()">Clear Table</button>
+</section>
 
-    <section class="panel">
-      <h2>Output 2: Sequential Circuit Diagram</h2>
-      <div id="diagram" class="diagram-box">
-        Circuit diagram will be generated here.
-      </div>
-    </section>
+<section class="panel">
+  <h2>Output 1: Flip-Flop Input Equations</h2>
+  <div id="equations" class="equation-box">
+    Please enter a state table and click GENERATE.
   </div>
+</section>
 
-  <div class="bottom-bar">
-    <button onclick="generate()">GENERATE</button>
-    <button class="secondary" onclick="exportReport()">EXPORT REPORT</button>
+<section class="panel">
+  <h2>Output 2: Sequential Circuit Diagram</h2>
+  <div id="diagram" class="diagram-box">
+    Circuit diagram will be generated here.
   </div>
+</section>
 
-  <script>
-    function addRow(ps = "", x = "", ns = "", z = "") {
-      const tbody = document.querySelector("#stateTable tbody");
-      const row = document.createElement("tr");
+</div>
 
-      row.innerHTML = `
-        <td><input value="${ps}"></td>
-        <td><input value="${x}"></td>
-        <td><input value="${ns}"></td>
-        <td><input value="${z}"></td>
-      `;
+<div class="bottom-bar">
+  <button onclick="generate()">GENERATE</button>
+</div>
 
-      tbody.appendChild(row);
-    }
+<script>
+function addRow(ps = "", x = "", ns = "", z = "") {
+  const tbody = document.querySelector("#stateTable tbody");
+  const row = document.createElement("tr");
 
-    function clearTable() {
-      document.querySelector("#stateTable tbody").innerHTML = "";
-      document.getElementById("equations").innerHTML =
-        "Please enter a state table and click GENERATE.";
-      document.getElementById("diagram").innerHTML =
-        "Circuit diagram will be generated here.";
-    }
+  row.innerHTML = `
+    <td><input value="${ps}"></td>
+    <td><input value="${x}"></td>
+    <td><input value="${ns}"></td>
+    <td><input value="${z}"></td>
+  `;
 
-    function loadExample() {
-      clearTable();
+  tbody.appendChild(row);
+}
 
-      addRow("A", "0", "A", "0");
-      addRow("A", "1", "B", "0");
-      addRow("B", "0", "C", "1");
-      addRow("B", "1", "A", "0");
-      addRow("C", "0", "A", "1");
-      addRow("C", "1", "C", "1");
-    }
+function clearTable() {
+  document.querySelector("#stateTable tbody").innerHTML = "";
+  document.getElementById("equations").innerHTML =
+    "Please enter a state table and click GENERATE.";
+  document.getElementById("diagram").innerHTML =
+    "Circuit diagram will be generated here.";
+}
 
-    function getSelectedFF() {
-      return document.querySelector('input[name="ff"]:checked').value;
-    }
+function loadExample() {
+  clearTable();
 
-    function getSelectedModel() {
-      return document.querySelector('input[name="model"]:checked').value;
-    }
+  addRow("A", "0", "A", "0");
+  addRow("A", "1", "B", "0");
+  addRow("B", "0", "C", "1");
+  addRow("B", "1", "A", "0");
+  addRow("C", "0", "A", "1");
+  addRow("C", "1", "C", "1");
+}
 
-    function generate() {
-      const ffType = getSelectedFF();
-      const modelType = getSelectedModel();
+function readStateTable() {
+  const rows = document.querySelectorAll("#stateTable tbody tr");
+  let data = [];
 
-      let equations = `
-        <b>Model Type:</b> ${modelType}<br>
-        <b>Flip-Flop Type:</b> ${ffType} Flip-Flop<br><br>
-      `;
+  rows.forEach(row => {
+    const cols = row.querySelectorAll("input");
 
-      if (ffType === "D") {
-        equations += `
-          <b>D Flip-Flop Input Equations</b><br>
-          D1 = Q1(next)<br>
-          D0 = Q0(next)<br>
-        `;
+    data.push({
+      present: cols[0].value.trim(),
+      x: cols[1].value.trim(),
+      next: cols[2].value.trim(),
+      z: cols[3].value.trim()
+    });
+  });
+
+  return data;
+}
+
+function encodeStates(rows) {
+  let states = new Set();
+
+  rows.forEach(r => {
+    if (r.present) states.add(r.present);
+    if (r.next) states.add(r.next);
+  });
+
+  states = [...states];
+
+  let bits = Math.ceil(Math.log2(states.length));
+  if (bits < 1) bits = 1;
+
+  let mapping = {};
+
+  states.forEach((s, index) => {
+    mapping[s] = index.toString(2).padStart(bits, "0");
+  });
+
+  return { mapping, bits };
+}
+
+function getSelectedFF() {
+  return document.querySelector('input[name="ff"]:checked').value;
+}
+
+function getSelectedModel() {
+  return document.querySelector('input[name="model"]:checked').value;
+}
+
+function getFFInputs(ffType, q, qNext) {
+  if (ffType === "D") {
+    return { D: qNext };
+  }
+
+  if (ffType === "T") {
+    return { T: q === qNext ? "0" : "1" };
+  }
+
+  if (ffType === "JK") {
+    if (q === "0" && qNext === "0") return { J: "0", K: "X" };
+    if (q === "0" && qNext === "1") return { J: "1", K: "X" };
+    if (q === "1" && qNext === "0") return { J: "X", K: "1" };
+    if (q === "1" && qNext === "1") return { J: "X", K: "0" };
+  }
+
+  if (ffType === "SR") {
+    if (q === "0" && qNext === "0") return { S: "0", R: "X" };
+    if (q === "0" && qNext === "1") return { S: "1", R: "0" };
+    if (q === "1" && qNext === "0") return { S: "0", R: "1" };
+    if (q === "1" && qNext === "1") return { S: "X", R: "0" };
+  }
+}
+
+function generate() {
+  const rows = readStateTable();
+  const ffType = getSelectedFF();
+  const modelType = getSelectedModel();
+
+  if (rows.length === 0) {
+    alert("Please enter state table.");
+    return;
+  }
+
+  const result = encodeStates(rows);
+  const mapping = result.mapping;
+  const bits = result.bits;
+
+  let html = `
+    <b>Model Type:</b> ${modelType}<br>
+    <b>Flip-Flop Type:</b> ${ffType} Flip-Flop<br><br>
+  `;
+
+  html += `<b>State Variables:</b> `;
+  for (let i = bits - 1; i >= 0; i--) {
+    html += `Q${i} `;
+  }
+
+  html += `<br><br><b>State Encoding</b><br>`;
+  for (let state in mapping) {
+    html += `${state} = ${mapping[state]}<br>`;
+  }
+
+  html += `<br><b>Excitation Table</b><br>`;
+  html += `<table>
+    <tr>
+      <th>Present</th>
+      <th>X</th>
+      <th>Next</th>
+      <th>Z</th>
+      <th>Q</th>
+      <th>Q(next)</th>
+      <th>FF Inputs</th>
+    </tr>
+  `;
+
+  rows.forEach(r => {
+    let q = mapping[r.present];
+    let qNext = mapping[r.next];
+
+    let ffText = "";
+
+    for (let i = 0; i < bits; i++) {
+      let qBit = q[i];
+      let qNextBit = qNext[i];
+      let inputs = getFFInputs(ffType, qBit, qNextBit);
+
+      let bitName = bits - 1 - i;
+
+      for (let key in inputs) {
+        ffText += `${key}${bitName}=${inputs[key]} `;
       }
-
-      if (ffType === "JK") {
-        equations += `
-          <b>JK Flip-Flop Input Equations</b><br>
-          J1 = simplified equation<br>
-          K1 = simplified equation<br>
-          J0 = simplified equation<br>
-          K0 = simplified equation<br>
-        `;
-      }
-
-      if (ffType === "T") {
-        equations += `
-          <b>T Flip-Flop Input Equations</b><br>
-          T1 = Q1 ⊕ Q1(next)<br>
-          T0 = Q0 ⊕ Q0(next)<br>
-        `;
-      }
-
-      if (ffType === "SR") {
-        equations += `
-          <b>SR Flip-Flop Input Equations</b><br>
-          S1 = set equation<br>
-          R1 = reset equation<br>
-          S0 = set equation<br>
-          R0 = reset equation<br>
-        `;
-      }
-
-      document.getElementById("equations").innerHTML = equations;
-
-      document.getElementById("diagram").innerHTML = `
-        <div>
-          <h3>${ffType} Flip-Flop Sequential Circuit Diagram</h3>
-          <p>Input X → Logic Gates → ${ffType} Flip-Flops → Output Z</p>
-          <p>CLK is connected to all flip-flops.</p>
-          <p>This area will be upgraded to an SVG circuit diagram in the next step.</p>
-        </div>
-      `;
     }
 
-    function exportReport() {
-      alert("Report export function will be added in the next version.");
-    }
+    html += `
+      <tr>
+        <td>${r.present}</td>
+        <td>${r.x}</td>
+        <td>${r.next}</td>
+        <td>${r.z}</td>
+        <td>${q}</td>
+        <td>${qNext}</td>
+        <td>${ffText}</td>
+      </tr>
+    `;
+  });
 
-    loadExample();
-  </script>
+  html += `</table>`;
+
+  document.getElementById("equations").innerHTML = html;
+
+  document.getElementById("diagram").innerHTML = `
+    <div>
+      <h3>${ffType} Flip-Flop Sequential Circuit Diagram</h3>
+      <p>Input X → Combinational Logic → ${ffType} Flip-Flops → Output Z</p>
+      <p>State Variables: ${Array.from({length: bits}, (_, i) => "Q" + (bits - 1 - i)).join(", ")}</p>
+      <p>CLK is connected to all flip-flops.</p>
+      <p>Next step: generate simplified Boolean equations and SVG circuit diagram.</p>
+    </div>
+  `;
+}
+
+loadExample();
+</script>
+
 </body>
 </html>
 ```
