@@ -26,6 +26,7 @@ button.danger{background:#b3261e}
 .diagram-box{background:#fff;border:1px dashed #999;border-radius:6px;min-height:420px;display:flex;align-items:center;justify-content:center;color:#555;text-align:center;padding:16px}
 .kmap{width:360px;margin-bottom:20px}
 .eq{font-weight:bold;color:#b3261e}
+.warning{color:#b3261e;font-weight:bold}
 </style>
 </head>
 
@@ -78,7 +79,7 @@ button.danger{background:#b3261e}
 <section class="panel">
   <h2>Output 2</h2>
   <div id="diagram" class="diagram-box">
-    Circuit diagram will be generated here.
+    Output2 is not included in this version.
   </div>
 </section>
 
@@ -110,7 +111,7 @@ function addRow(ps="", x="", ns="", z=""){
 function clearTable(){
   document.querySelector("#stateTable tbody").innerHTML="";
   document.getElementById("output1").innerHTML="Please enter a state table and click GENERATE.";
-  document.getElementById("diagram").innerHTML="Circuit diagram will be generated here.";
+  document.getElementById("diagram").innerHTML="Output2 is not included in this version.";
 }
 
 function loadExample(){
@@ -146,6 +147,51 @@ function getSelectedFF(){
 
 function getSelectedModel(){
   return document.querySelector('input[name="model"]:checked').value;
+}
+
+function validateMooreOutputs(rows){
+  let outputByState={};
+
+  for(let r of rows){
+    if(outputByState[r.present]===undefined){
+      outputByState[r.present]=r.z;
+    }else{
+      if(outputByState[r.present]!==r.z){
+        return {
+          ok:false,
+          state:r.present,
+          firstZ:outputByState[r.present],
+          secondZ:r.z
+        };
+      }
+    }
+  }
+
+  return {ok:true};
+}
+
+function renderOutputFunction(model){
+  let html="<h3>Output Function</h3>";
+
+  if(model==="Moore"){
+    html+=`
+      <table>
+        <tr><th>Model</th><th>Output depends on</th><th>Function</th></tr>
+        <tr><td>Moore</td><td>Present State only</td><td>Z = f(Q1,Q0)</td></tr>
+      </table>
+    `;
+  }
+
+  if(model==="Mealy"){
+    html+=`
+      <table>
+        <tr><th>Model</th><th>Output depends on</th><th>Function</th></tr>
+        <tr><td>Mealy</td><td>Present State and Input</td><td>Z = f(Q1,Q0,X)</td></tr>
+      </table>
+    `;
+  }
+
+  return html;
 }
 
 function encodeStates(rows){
@@ -251,7 +297,7 @@ function renderStateAssignment(map){
 }
 
 function renderInputTable(inputTable,ff){
-  let cols=["Q1","Q0","X"];
+  let cols=["Q1","Q0","X","Z"];
 
   if(ff==="D") cols.push("D0","D1");
   if(ff==="JK") cols.push("J0","K0","J1","K1");
@@ -500,6 +546,25 @@ function generate(){
     return;
   }
 
+  if(model==="Moore"){
+    let mooreCheck=validateMooreOutputs(rows);
+
+    if(!mooreCheck.ok){
+      document.getElementById("output1").innerHTML=`
+        <h3 class="warning">Moore Model Error</h3>
+        <p class="warning">
+          State ${mooreCheck.state} has inconsistent output Z.
+        </p>
+        <p>
+          Moore Model requires the same Present State to have the same output Z.
+          In Moore Model, Z = f(Q1,Q0), so Z cannot be affected by X.
+        </p>
+      `;
+      alert("Moore Model Error: State " + mooreCheck.state + " has inconsistent output Z.");
+      return;
+    }
+  }
+
   let map=encodeStates(rows);
   if(map===null) return;
 
@@ -511,6 +576,7 @@ function generate(){
     <b>Flip-Flop Type:</b> ${ff} Flip-Flop<br><br>
   `;
 
+  html+=renderOutputFunction(model);
   html+=renderStateAssignment(map);
   html+=renderInputTable(inputTable,ff);
   html+=renderKmaps(inputTable,ff,equations);
@@ -520,9 +586,9 @@ function generate(){
 
   document.getElementById("diagram").innerHTML=`
     <div>
-      <h3>${ff} Flip-Flop Sequential Circuit Diagram</h3>
-      <p>The circuit diagram will be generated from the simplified equations.</p>
-      <p>Current step completed: Input Table, K-map, and Final Equations.</p>
+      <h3>Output2 Not Included</h3>
+      <p>This version focuses on Output1 only.</p>
+      <p>Current step completed: Moore/Mealy function, Input Table, K-map, and Final Equations.</p>
     </div>
   `;
 }
