@@ -292,15 +292,15 @@ function renderInputTable(inputTable,ff){
   return html;
 }
 
-/* K-map index：variables = X, Q0, Q1 */
-function getIndex(X,Q0,Q1){
-  return Number(X)*4 + Number(Q0)*2 + Number(Q1);
+/* K-map index：variables = X, Q1, Q0 */
+function getIndex(X,Q1,Q0){
+  return Number(X)*4 + Number(Q1)*2 + Number(Q0);
 }
 
 function buildKmapValues(inputTable,inputName){
   let values=Array(8).fill("-");
   inputTable.forEach(r=>{
-    let index=getIndex(r.X,r.Q0,r.Q1);
+    let index=getIndex(r.X,r.Q1,r.Q0);
     values[index]=r[inputName];
   });
   return values;
@@ -327,7 +327,7 @@ function renderKmap(inputName,values,equation){
   ["0","1"].forEach(x=>{
     html+=`<tr><th>${x}</th>`;
     cols.forEach(c=>{
-      let index=getIndex(x,c.q0,c.q1);
+      let index=getIndex(x,c.q1,c.q0);
       html+=`<td>${values[index]}</td>`;
     });
     html+=`</tr>`;
@@ -344,7 +344,7 @@ function patternCovers(pattern,index){
     Math.floor(index/4)%2,
     Math.floor(index/2)%2,
     index%2
-  ]; // X,Q0,Q1
+  ]; // X,Q1,Q0
 
   for(let i=0;i<3;i++){
     if(pattern[i]!=="-" && Number(pattern[i])!==bits[i]) return false;
@@ -357,7 +357,7 @@ function literalCount(pattern){
 }
 
 function patternToTerm(pattern){
-  let vars=["X","Q0","Q1"];
+  let vars=["X","Q1","Q0"];
   let factors=[];
 
   for(let i=0;i<3;i++){
