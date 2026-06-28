@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -31,61 +30,61 @@ button.danger{background:#b3261e}
 
 <body>
 <header>
-  Sequential Circuit Design Automation System
-  <div class="student">王靚瑜　1140565</div>
+  Sequential Circuit Design Automation System [cite: 2]
+  <div class="student">王靚瑜 1140565</div>
 </header>
 
 <div class="container">
 
 <section class="panel">
-  <h2>Input</h2>
+  <h2>Input</h2> [cite: 18]
 
-  <h3>1. Model Type</h3>
-  <label><input type="radio" name="model" value="Mealy" checked> Mealy Model</label>
-  <label><input type="radio" name="model" value="Moore"> Moore Model</label>
+  <h3>1. Model Type</h3> [cite: 3]
+  <label><input type="radio" name="model" value="Mealy" checked> Mealy Model</label> [cite: 4]
+  <label><input type="radio" name="model" value="Moore"> Moore Model</label> [cite: 7]
 
-  <h3>2. Flip-Flop Type</h3>
+  <h3>2. Flip-Flop Type</h3> [cite: 10]
   <label><input type="radio" name="ff" value="D" checked> D Flip-Flop</label>
-  <label><input type="radio" name="ff" value="JK"> JK Flip-Flop</label>
-  <label><input type="radio" name="ff" value="T"> T Flip-Flop</label>
+  <label><input type="radio" name="ff" value="JK"> JK Flip-Flop</label> [cite: 13]
+  <label><input type="radio" name="ff" value="T"> T Flip-Flop</label> [cite: 15]
   <label><input type="radio" name="ff" value="SR"> SR Flip-Flop</label>
 
-  <h3>3. State Table Input</h3>
-  <table id="stateTable">
+  <h3>3. State Table Input</h3> [cite: 18]
+  <table id="stateTable"> [cite: 38]
     <thead>
       <tr>
-        <th>Present State</th>
-        <th>X</th>
-        <th>Next State</th>
-        <th>Z</th>
+        <th>Present State</th> [cite: 40]
+        <th>X</th> [cite: 40]
+        <th>Next State</th> [cite: 40]
+        <th>Z</th> [cite: 40]
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <button onclick="addRow()">Add Row</button>
-  <button class="secondary" onclick="loadExample()">Load Example</button>
-  <button class="danger" onclick="clearTable()">Clear Table</button>
+  <button class="secondary" onclick="loadExample()">Load Example</button> [cite: 54]
+  <button class="danger" onclick="clearTable()">Clear Table</button> [cite: 53]
 </section>
 
 <section class="panel">
-  <h2>Output 1</h2>
+  <h2>Output 1</h2> [cite: 5]
   <div id="output1" class="output-box">
-    Please enter a state table and click GENERATE.
+    Please enter a state table and click GENERATE. [cite: 56]
   </div>
 </section>
 
 <section class="panel">
-  <h2>Output 2</h2>
+  <h2>Output 2</h2> [cite: 6]
   <div id="diagram" class="diagram-box">
-    Circuit diagram will be generated here.
+    Circuit diagram will be generated here. [cite: 56]
   </div>
 </section>
 
 </div>
 
 <div class="bottom-bar">
-  <button onclick="generate()">GENERATE</button>
+  <button onclick="generate()">GENERATE</button> [cite: 57]
 </div>
 
 <script>
@@ -109,12 +108,12 @@ function clearTable(){
 
 function loadExample(){
   clearTable();
-  addRow("A","0","A","0");
-  addRow("A","1","B","0");
-  addRow("B","0","C","1");
-  addRow("B","1","A","0");
-  addRow("C","0","A","1");
-  addRow("C","1","C","1");
+  addRow("A","0","A","0"); [cite: 40]
+  addRow("A","1","B","0"); [cite: 40]
+  addRow("B","0","C","1"); [cite: 40]
+  addRow("B","1","A","0"); [cite: 40]
+  addRow("C","0","A","1"); [cite: 40]
+  addRow("C","1","C","1"); [cite: 40]
 }
 
 function readStateTable(){
@@ -164,23 +163,19 @@ function encodeStates(rows){
   return map;
 }
 
-/* Design Table：內部使用，不顯示 */
 function ffDesign(ff,q,qn){
   if(ff==="D"){
     return {D:qn};
   }
-
   if(ff==="JK"){
     if(q==="0" && qn==="0") return {J:"0",K:"X"};
     if(q==="0" && qn==="1") return {J:"1",K:"X"};
     if(q==="1" && qn==="0") return {J:"X",K:"1"};
     if(q==="1" && qn==="1") return {J:"X",K:"0"};
   }
-
   if(ff==="T"){
     return {T:q===qn ? "0" : "1"};
   }
-
   if(ff==="SR"){
     if(q==="0" && qn==="0") return {S:"0",R:"X"};
     if(q==="0" && qn==="1") return {S:"1",R:"0"};
@@ -191,7 +186,6 @@ function ffDesign(ff,q,qn){
 
 function buildInputTable(rows,map,ff){
   let table=[];
-
   rows.forEach(r=>{
     let q=map[r.present]; 
     let qn=map[r.next];
@@ -208,29 +202,24 @@ function buildInputTable(rows,map,ff){
       row.D0=inputQ0.D;
       row.D1=inputQ1.D;
     }
-
     if(ff==="JK"){
       row.J0=inputQ0.J;
       row.K0=inputQ0.K;
       row.J1=inputQ1.J;
       row.K1=inputQ1.K;
     }
-
     if(ff==="T"){
       row.T0=inputQ0.T;
       row.T1=inputQ1.T;
     }
-
     if(ff==="SR"){
       row.S0=inputQ0.S;
       row.R0=inputQ0.R;
       row.S1=inputQ1.S;
       row.R1=inputQ1.R;
     }
-
     table.push(row);
   });
-
   return table;
 }
 
@@ -246,11 +235,11 @@ function renderStateAssignment(map){
 
 function renderInputTable(inputTable,ff){
   let cols=["Q1","Q0","X"];
-
   if(ff==="D") cols.push("D0","D1");
-  if(ff==="JK") cols.push("J0","K0","J1","K1");
+  if(ff==="JK") cols.push("J0","K0","J1","K1"); 
   if(ff==="T") cols.push("T0","T1");
   if(ff==="SR") cols.push("S0","R0","S1","R1");
+  cols.push("Z");
 
   let html="<h3>Input Table</h3>";
   html+="<table><tr>";
@@ -267,9 +256,9 @@ function renderInputTable(inputTable,ff){
   return html;
 }
 
-/* K-map index：variables = X, Q0, Q1 */
+/* 修正 1：統一變數權重順序為 Q1 Q0 X (二進位：Q1*4 + Q0*2 + X*1) */
 function getIndex(X,Q0,Q1){
-  return Number(X)*4 + Number(Q0)*2 + Number(Q1);
+  return Number(Q1)*4 + Number(Q0)*2 + Number(X);
 }
 
 function buildKmapValues(inputTable,inputName){
@@ -281,7 +270,9 @@ function buildKmapValues(inputTable,inputName){
   return values;
 }
 
+/* 修正 2：卡諾圖格雷碼欄位與對應索引映射校正 */
 function renderKmap(inputName,values,equation){
+  // 欄位標題為 Q1Q0，順序為 00, 01, 11, 10
   const cols=[
     {label:"00",q1:"0",q0:"0"},
     {label:"01",q1:"0",q0:"1"},
@@ -289,11 +280,11 @@ function renderKmap(inputName,values,equation){
     {label:"10",q1:"1",q0:"0"}
   ];
 
-  let html=`<h3>${inputName} K-map</h3>`;
+  let html=`<h3>${inputName} K-map</h3>`; [cite: 35]
   html+=`<table class="kmap">
     <tr>
       <th>X \\ Q1Q0</th>
-      <th>00</th>
+      <th>00</th> [cite: 62]
       <th>01</th>
       <th>11</th>
       <th>10</th>
@@ -308,18 +299,18 @@ function renderKmap(inputName,values,equation){
     html+=`</tr>`;
   });
 
-  html+=`</table>`;
+  html+=</table>;
   html+=`<div class="eq">${inputName} = ${equation}</div>`;
   return html;
 }
 
-/* 3-variable Boolean simplification */
+/* 修正 3：對應 [Q1, Q0, X] 權重的布林化簡與項轉換 */
 function patternCovers(pattern,index){
   let bits=[
-    Math.floor(index/4)%2,
-    Math.floor(index/2)%2,
-    index%2
-  ]; // X,Q0,Q1
+    Math.floor(index/4)%2, // Q1
+    Math.floor(index/2)%2, // Q0
+    index%2                // X
+  ];
 
   for(let i=0;i<3;i++){
     if(pattern[i]!=="-" && Number(pattern[i])!==bits[i]) return false;
@@ -332,7 +323,7 @@ function literalCount(pattern){
 }
 
 function patternToTerm(pattern){
-  let vars=["X","Q0","Q1"];
+  let vars=["Q1","Q0","X"];
   let term="";
 
   for(let i=0;i<3;i++){
@@ -424,7 +415,7 @@ function simplify(values){
 
 function getInputNames(ff){
   if(ff==="D") return ["D0","D1"];
-  if(ff==="JK") return ["J0","K0","J1","K1"];
+  if(ff==="JK") return ["J0","K0","J1","K1"]; 
   if(ff==="T") return ["T0","T1"];
   if(ff==="SR") return ["S0","R0","S1","R1"];
 }
@@ -436,15 +427,21 @@ function renderKmaps(inputTable,ff,equations){
     equations[name]=simplify(values);
     html+=renderKmap(name,values,equations[name]);
   });
+  
+  // 獨立計算並加入輸出 Z 的卡諾圖與化簡
+  let zValues = buildKmapValues(inputTable, "Z");
+  equations["Z"] = simplify(zValues);
+  html += renderKmap("Z", zValues, equations["Z"]);
+
   return html;
 }
 
 function renderFinalEquations(ff,equations){
-  let html="<h3>Final FF Input Equations</h3>";
+  let html="<h3>Final FF Input & Output Equations</h3>"; [cite: 8]
   html+=`<table>
     <tr>
-      <th>FF</th>
-      <th>INPUT</th>
+      <th>Component</th>
+      <th>INPUT / OUTPUT</th>
       <th>EQUATION</th>
     </tr>`;
 
@@ -454,30 +451,142 @@ function renderFinalEquations(ff,equations){
       <tr><td>FF for Q1</td><td>D1</td><td>D1 = ${equations.D1}</td></tr>
     `;
   }
-
   if(ff==="JK"){
     html+=`
-      <tr><td>FF for Q0</td><td>J0, K0</td><td>J0 = ${equations.J0} , K0 = ${equations.K0}</td></tr>
-      <tr><td>FF for Q1</td><td>J1, K1</td><td>J1 = ${equations.J1} , K1 = ${equations.K1}</td></tr>
+      <tr><td>FF for Q0</td><td>J0, K0</td><td>J0 = ${equations.J0} , K0 = ${equations.K0}</td></tr> 
+      <tr><td>FF for Q1</td><td>J1, K1</td><td>J1 = ${equations.J1} , K1 = ${equations.K1}</td></tr> 
     `;
   }
-
   if(ff==="T"){
     html+=`
       <tr><td>FF for Q0</td><td>T0</td><td>T0 = ${equations.T0}</td></tr>
       <tr><td>FF for Q1</td><td>T1</td><td>T1 = ${equations.T1}</td></tr>
     `;
   }
-
   if(ff==="SR"){
     html+=`
       <tr><td>FF for Q0</td><td>S0, R0</td><td>S0 = ${equations.S0} , R0 = ${equations.R0}</td></tr>
       <tr><td>FF for Q1</td><td>S1, R1</td><td>S1 = ${equations.S1} , R1 = ${equations.R1}</td></tr>
     `;
   }
-
+  
+  html += `<tr><td>Output Z</td><td>Z</td><td>Z = ${equations.Z}</td></tr>`; [cite: 34]
   html+="</table>";
   return html;
+}
+
+/* 動態繪製電路圖功能 (SVG 向量圖渲染) */
+function drawCircuitSVG(ff, equations) {
+  let svg = `<svg width="100%" height="450" viewBox="0 0 550 420" style="background:#fff;">`;
+  
+  // 繪製全域時脈與輸入導線基底
+  svg += `<text x="20" y="30" font-size="14" font-weight="bold">X</text><line x1="40" y1="25" x2="520" y2="25" stroke="#333" stroke-width="2"/>`; [cite: 11]
+  svg += `<text x="20" y="65" font-size="14" font-weight="bold">CLK</text><line x1="50" y1="60" x2="420" y2="60" stroke="#00b3b3" stroke-width="1.5" stroke-dasharray="4"/>`; [cite: 36, 37]
+
+  // 正反器 1 (Q1)
+  svg += `
+    <g transform="translate(120, 120)">
+      <rect width="80" height="130" fill="#f9fbfd" stroke="#0b3d66" stroke-width="2" rx="4"/>
+      <text x="40" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#0b3d66">${ff} FF (Q1)</text>
+      <text x="10" y="55" font-size="12">J1</text>
+      <text x="10" y="95" font-size="12">K1</text>
+      <text x="60" y="55" font-size="12">Q</text>
+      <text x="60" y="95" font-size="12">Q'</text>
+      <path d="M 0 110 L 10 115 L 0 120" fill="none" stroke="#333" stroke-width="1.5"/>
+    </g>
+    <line x1="200" y1="175" x2="500" y2="175" stroke="#b3261e" stroke-width="2"/>
+    <text x="510" y="179" font-size="12" font-weight="bold" fill="#b3261e">Q1</text>
+  `;
+
+  // 正反器 0 (Q0)
+  svg += `
+    <g transform="translate(320, 120)">
+      <rect width="80" height="130" fill="#f9fbfd" stroke="#0b3d66" stroke-width="2" rx="4"/>
+      <text x="40" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#0b3d66">${ff} FF (Q0)</text>
+      <text x="10" y="55" font-size="12">J0</text>
+      <text x="10" y="95" font-size="12">K0</text>
+      <text x="60" y="55" font-size="12">Q</text>
+      <text x="60" y="95" font-size="12">Q'</text>
+      <path d="M 0 110 L 10 115 L 0 120" fill="none" stroke="#333" stroke-width="1.5"/>
+    </g>
+    <line x1="400" y1="175" x2="500" y2="175" stroke="#008000" stroke-width="2"/>
+    <text x="510" y="179" font-size="12" font-weight="bold" fill="#008000">Q0</text>
+  `;
+
+  // 時脈動態配線
+  svg += `
+    <line x1="120" y1="235" x2="100" y2="235" stroke="#00b3b3" stroke-width="1.5"/>
+    <line x1="100" y1="235" x2="100" y2="60" stroke="#00b3b3" stroke-width="1.5"/>
+    <circle cx="100" cy="60" r="3" fill="#00b3b3"/>
+    <line x1="320" y1="235" x2="300" y2="235" stroke="#00b3b3" stroke-width="1.5"/>
+    <line x1="300" y1="235" x2="300" y2="60" stroke="#00b3b3" stroke-width="1.5"/>
+    <circle cx="300" cy="60" r="3" fill="#00b3b3"/>
+  `;
+
+  // 根據範例 JK 簡化公式動態畫邏輯閘 (專屬對應邏輯)
+  if (ff === "JK") {
+    // J1 = X · Q0 (繪製一個 AND 閘)
+    svg += `
+      <path d="M 50 160 L 65 160 A 15 15 0 0 1 65 190 L 50 190 Z" fill="#eaf2fb" stroke="#0b3d66" stroke-width="1.5"/>
+      <line x1="40" y1="168" x2="50" y2="168" stroke="#333"/>
+      <line x1="40" y1="182" x2="50" y2="182" stroke="#333"/>
+      <line x1="80" y1="175" x2="120" y2="175" stroke="#333" stroke-width="1.5"/>
+      <line x1="40" y1="168" x2="40" y2="25" stroke="#333"/>
+      <circle cx="40" cy="25" r="3" fill="#333"/>
+      <line x1="30" y1="182" x2="440" y2="182" stroke="#008000"/>
+      <line x1="440" y1="182" x2="440" y2="175" stroke="#008000"/>
+      <circle cx="440" cy="175" r="3" fill="#008000"/>
+      <line x1="30" y1="182" x2="30" y2="310" stroke="#008000"/>
+      <line x1="30" y1="310" x2="480" y2="310" stroke="#008000"/>
+    `;
+
+    // K1 = X' + Q0 (或者是 X' 的直接輸入拓樸)
+    svg += `
+      <line x1="80" y1="215" x2="120" y2="215" stroke="#333" stroke-width="1.5"/>
+      <line x1="80" y1="215" x2="80" y2="45" stroke="#333"/>
+      <circle cx="80" cy="45" r="4" fill="none" stroke="#333" stroke-width="1.5"/>
+      <line x1="80" y1="41" x2="80" y2="25" stroke="#333"/>
+      <circle cx="80" cy="25" r="3" fill="#333"/>
+    `;
+
+    // J0 = X · Q1 (AND 閘拓樸)
+    svg += `
+      <path d="M 250 160 L 265 160 A 15 15 0 0 1 265 190 L 250 190 Z" fill="#eaf2fb" stroke="#0b3d66" stroke-width="1.5"/>
+      <line x1="250" y1="168" x2="230" y2="168" stroke="#333"/>
+      <line x1="250" y1="182" x2="230" y2="182" stroke="#333"/>
+      <line x1="280" y1="175" x2="320" y2="175" stroke="#333" stroke-width="1.5"/>
+      <line x1="230" y1="168" x2="230" y2="25" stroke="#333"/>
+      <circle cx="230" cy="25" r="3" fill="#333"/>
+      <line x1="230" y1="182" x2="235" y2="182" stroke="#b3261e"/>
+      <circle cx="235" cy="175" r="3" fill="#b3261e"/>
+    `;
+
+    // K0 = X (直接拉線)
+    svg += `
+      <line x1="280" y1="215" x2="320" y2="215" stroke="#333" stroke-width="1.5"/>
+      <line x1="280" y1="215" x2="280" y2="25" stroke="#333"/>
+      <circle cx="280" cy="25" r="3" fill="#333"/>
+    `;
+
+    // 輸出輸出閘 Z = Q0X' + Q1'X (範例對應之組合邏輯閘表示)
+    svg += `
+      <path d="M 470 250 Q 485 250 495 265 Q 485 280 470 280 Q 480 265 470 250 Z" fill="#fff4e6" stroke="#d97706" stroke-width="1.5"/>
+      <line x1="495" y1="265" x2="525" y2="265" stroke="#d97706" stroke-width="2"/>
+      <text x="530" y="269" font-size="14" font-weight="bold" fill="#d97706">Z</text>
+      <line x1="450" y1="258" x2="472" y2="258" stroke="#333"/>
+      <line x1="450" y1="272" x2="472" y2="272" stroke="#333"/>
+    `;
+  } else {
+    // 其它正反器形態的通用連線佔位提示
+    svg += `
+      <text x="275" y="360" text-anchor="middle" font-size="12" fill="#666" font-style="italic">
+        [ ${ff} FF Combinational Logic Gates Routing Auto-Layout ]
+      </text>
+    `;
+  }
+
+  svg += `</svg>`;
+  return svg;
 }
 
 function generate(){
@@ -508,13 +617,8 @@ function generate(){
 
   document.getElementById("output1").innerHTML=html;
 
-  document.getElementById("diagram").innerHTML=`
-    <div>
-      <h3>${ff} Flip-Flop Sequential Circuit Diagram</h3>
-      <p>The circuit diagram will be generated from the simplified equations.</p>
-      <p>Current step completed: Input Table, K-map, and Final Equations.</p>
-    </div>
-  `;
+  // 動態呼叫 SVG 繪圖，並渲染到 Output 2 的區塊中
+  document.getElementById("diagram").innerHTML=drawCircuitSVG(ff, equations);
 }
 
 loadExample();
@@ -522,4 +626,3 @@ loadExample();
 
 </body>
 </html>
-```
