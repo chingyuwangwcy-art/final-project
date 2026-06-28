@@ -48,8 +48,6 @@ button.danger{background:#b3261e}
   <h3>2. Flip-Flop Type</h3>
   <label><input type="radio" name="ff" value="D" checked> D Flip-Flop</label>
   <label><input type="radio" name="ff" value="JK"> JK Flip-Flop</label>
-  <label><input type="radio" name="ff" value="T"> T Flip-Flop</label>
-  <label><input type="radio" name="ff" value="SR"> SR Flip-Flop</label>
 
   <h3>3. State Table Input</h3>
   <table id="stateTable">
@@ -228,17 +226,6 @@ function ffDesign(ff,q,qn){
     if(q==="1" && qn==="0") return {J:"X",K:"1"};
     if(q==="1" && qn==="1") return {J:"X",K:"0"};
   }
-
-  if(ff==="T"){
-    return {T:q===qn ? "0" : "1"};
-  }
-
-  if(ff==="SR"){
-    if(q==="0" && qn==="0") return {S:"0",R:"X"};
-    if(q==="0" && qn==="1") return {S:"1",R:"0"};
-    if(q==="1" && qn==="0") return {S:"0",R:"1"};
-    if(q==="1" && qn==="1") return {S:"X",R:"0"};
-  }
 }
 
 function buildInputTable(rows,map,ff){
@@ -268,18 +255,6 @@ function buildInputTable(rows,map,ff){
       row.K1=inputQ1.K;
     }
 
-    if(ff==="T"){
-      row.T0=inputQ0.T;
-      row.T1=inputQ1.T;
-    }
-
-    if(ff==="SR"){
-      row.S0=inputQ0.S;
-      row.R0=inputQ0.R;
-      row.S1=inputQ1.S;
-      row.R1=inputQ1.R;
-    }
-
     table.push(row);
   });
 
@@ -301,8 +276,6 @@ function renderInputTable(inputTable,ff){
 
   if(ff==="D") cols.push("D0","D1");
   if(ff==="JK") cols.push("J0","K0","J1","K1");
-  if(ff==="T") cols.push("T0","T1");
-  if(ff==="SR") cols.push("S0","R0","S1","R1");
 
   let html="<h3>Input Table</h3>";
   html+="<table><tr>";
@@ -477,8 +450,6 @@ function simplify(values){
 function getInputNames(ff){
   if(ff==="D") return ["D0","D1"];
   if(ff==="JK") return ["J0","K0","J1","K1"];
-  if(ff==="T") return ["T0","T1"];
-  if(ff==="SR") return ["S0","R0","S1","R1"];
 }
 
 function renderKmaps(inputTable,ff,equations){
@@ -513,22 +484,6 @@ function renderFinalEquations(ff,equations){
       <tr><td>FF for Q0</td><td>K0</td><td>K0 = ${equations.K0}</td></tr>
       <tr><td>FF for Q1</td><td>J1</td><td>J1 = ${equations.J1}</td></tr>
       <tr><td>FF for Q1</td><td>K1</td><td>K1 = ${equations.K1}</td></tr>
-    `;
-  }
-
-  if(ff==="T"){
-    html+=`
-      <tr><td>FF for Q0</td><td>T0</td><td>T0 = ${equations.T0}</td></tr>
-      <tr><td>FF for Q1</td><td>T1</td><td>T1 = ${equations.T1}</td></tr>
-    `;
-  }
-
-  if(ff==="SR"){
-    html+=`
-      <tr><td>FF for Q0</td><td>S0</td><td>S0 = ${equations.S0}</td></tr>
-      <tr><td>FF for Q0</td><td>R0</td><td>R0 = ${equations.R0}</td></tr>
-      <tr><td>FF for Q1</td><td>S1</td><td>S1 = ${equations.S1}</td></tr>
-      <tr><td>FF for Q1</td><td>R1</td><td>R1 = ${equations.R1}</td></tr>
     `;
   }
 
