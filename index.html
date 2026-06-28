@@ -91,6 +91,12 @@ button.danger{background:#b3261e}
 <script>
 function addRow(ps="", x="", ns="", z=""){
   const tbody=document.querySelector("#stateTable tbody");
+
+  if(tbody.children.length >= 8){
+    alert("State Table Input is limited to 8 rows. This version supports up to 4 states, each with two input X values.");
+    return;
+  }
+
   const row=document.createElement("tr");
   row.innerHTML=`
     <td><input value="${ps}"></td>
@@ -457,8 +463,10 @@ function renderFinalEquations(ff,equations){
 
   if(ff==="JK"){
     html+=`
-      <tr><td>FF for Q0</td><td>J0, K0</td><td>J0 = ${equations.J0} , K0 = ${equations.K0}</td></tr>
-      <tr><td>FF for Q1</td><td>J1, K1</td><td>J1 = ${equations.J1} , K1 = ${equations.K1}</td></tr>
+      <tr><td>FF for Q0</td><td>J0</td><td>J0 = ${equations.J0}</td></tr>
+      <tr><td>FF for Q0</td><td>K0</td><td>K0 = ${equations.K0}</td></tr>
+      <tr><td>FF for Q1</td><td>J1</td><td>J1 = ${equations.J1}</td></tr>
+      <tr><td>FF for Q1</td><td>K1</td><td>K1 = ${equations.K1}</td></tr>
     `;
   }
 
@@ -471,8 +479,10 @@ function renderFinalEquations(ff,equations){
 
   if(ff==="SR"){
     html+=`
-      <tr><td>FF for Q0</td><td>S0, R0</td><td>S0 = ${equations.S0} , R0 = ${equations.R0}</td></tr>
-      <tr><td>FF for Q1</td><td>S1, R1</td><td>S1 = ${equations.S1} , R1 = ${equations.R1}</td></tr>
+      <tr><td>FF for Q0</td><td>S0</td><td>S0 = ${equations.S0}</td></tr>
+      <tr><td>FF for Q0</td><td>R0</td><td>R0 = ${equations.R0}</td></tr>
+      <tr><td>FF for Q1</td><td>S1</td><td>S1 = ${equations.S1}</td></tr>
+      <tr><td>FF for Q1</td><td>R1</td><td>R1 = ${equations.R1}</td></tr>
     `;
   }
 
