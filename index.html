@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -155,12 +154,7 @@ function validateMooreOutputs(rows){
       outputByState[r.present]=r.z;
     }else{
       if(outputByState[r.present]!==r.z){
-        return {
-          ok:false,
-          state:r.present,
-          firstZ:outputByState[r.present],
-          secondZ:r.z
-        };
+        return {ok:false,state:r.present};
       }
     }
   }
@@ -298,11 +292,13 @@ function getIndex(X,Q1,Q0){
 }
 
 function buildKmapValues(inputTable,inputName){
-  let values=Array(8).fill("-");
+  let values=Array(8).fill("X");
+
   inputTable.forEach(r=>{
     let index=getIndex(r.X,r.Q1,r.Q0);
     values[index]=r[inputName];
   });
+
   return values;
 }
 
@@ -349,11 +345,16 @@ function patternCovers(pattern,index){
   for(let i=0;i<3;i++){
     if(pattern[i]!=="-" && Number(pattern[i])!==bits[i]) return false;
   }
+
   return true;
 }
 
 function literalCount(pattern){
   return pattern.split("").filter(c=>c!=="-").length;
+}
+
+function patternSize(pattern){
+  return Math.pow(2,pattern.split("").filter(c=>c==="-").length);
 }
 
 function patternToTerm(pattern){
@@ -403,11 +404,21 @@ function simplify(values){
         let coversOne=covered.some(i=>ones.includes(i));
 
         if(valid && coversOne){
-          patterns.push({p,covered});
+          patterns.push({
+            p:p,
+            covered:covered,
+            size:patternSize(p),
+            lits:literalCount(p)
+          });
         }
       }
     }
   }
+
+  patterns.sort((a,b)=>{
+    if(b.size!==a.size) return b.size-a.size;
+    return a.lits-b.lits;
+  });
 
   let best=null;
   let n=patterns.length;
@@ -428,21 +439,32 @@ function simplify(values){
     let ok=ones.every(x=>cover.has(x));
     if(!ok) continue;
 
-    let costLits=selected.reduce((sum,item)=>sum+literalCount(item.p),0);
+    let costLits=selected.reduce((sum,item)=>sum+item.lits,0);
     let costTerms=selected.length;
+    let totalSize=selected.reduce((sum,item)=>sum+item.size,0);
 
     if(
       best===null ||
       costLits < best.costLits ||
-      (costLits===best.costLits && costTerms < best.costTerms)
+      (costLits===best.costLits && costTerms < best.costTerms) ||
+      (costLits===best.costLits && costTerms===best.costTerms && totalSize > best.totalSize)
     ){
-      best={selected,costLits,costTerms};
+      best={
+        selected:selected,
+        costLits:costLits,
+        costTerms:costTerms,
+        totalSize:totalSize
+      };
     }
   }
 
   if(best===null) return "0";
 
   return best.selected
+    .sort((a,b)=>{
+      if(a.lits!==b.lits) return a.lits-b.lits;
+      return b.size-a.size;
+    })
     .map(item=>patternToTerm(item.p))
     .join(" + ");
 }
@@ -454,11 +476,13 @@ function getInputNames(ff){
 
 function renderKmaps(inputTable,ff,equations){
   let html="<h3>K-map Simplification</h3>";
+
   getInputNames(ff).forEach(name=>{
     let values=buildKmapValues(inputTable,name);
     equations[name]=simplify(values);
     html+=renderKmap(name,values,equations[name]);
   });
+
   return html;
 }
 
@@ -508,14 +532,13 @@ function generate(){
       document.getElementById("output1").innerHTML=`
         <h3 class="warning">Moore Model Error</h3>
         <p class="warning">
-          State ${mooreCheck.state} has inconsistent output Z.
+          State ${mooreCheck.state} has inconsistent output.
         </p>
-        <p>
-          Moore Model requires the same Present State to have the same output Z.
-          In Moore Model, Z = f(Q1,Q0), so Z cannot be affected by X.
+        <p class="warning">
+          Moore machine requires one output for each state.
         </p>
       `;
-      alert("Moore Model Error: State " + mooreCheck.state + " has inconsistent output Z.");
+      alert("State " + mooreCheck.state + " has inconsistent output. Moore machine requires one output for each state.");
       return;
     }
   }
@@ -543,7 +566,6 @@ function generate(){
     <div>
       <h3>Output2 Not Included</h3>
       <p>This version focuses on Output1 only.</p>
-      <p>Current step completed: Moore/Mealy function, Input Table, K-map, and Final Equations.</p>
     </div>
   `;
 }
@@ -553,4 +575,3 @@ loadExample();
 
 </body>
 </html>
-```
